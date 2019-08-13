@@ -1,0 +1,28 @@
+[bootstrap]
+main_collection = /main/main.collectionc
+
+[script]
+shared_state = 1
+
+[display]
+width = 960
+height = 640
+
+[android]
+input_method = HiddenInputField
+
+[project]
+title = MCI_Defold
+dependencies = https://github.com/defold/extension-fbinstant/archive/master.zip
+
+[library]
+include_dirs = mcinstant
+
+[html5]
+htmlfile = /mcinstant/index.html
+
+[facebook]
+appid = 201965467362573
+
+[fb_instant]
+stretch_canvas = 0

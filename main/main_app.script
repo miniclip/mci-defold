@@ -1,0 +1,69 @@
+local json = require "mcinstant.utils.json"
+
+function init(self)
+	msg.post("#", "initialize")
+end
+
+function final(self)
+	-- Add finalization code here
+	-- Remove this function if not needed
+end
+
+function update(self, dt)
+	-- Add update code here
+	-- Remove this function if not needed
+end
+
+function OnWalletUpdated(self, args)
+	print("Wallet Balance was updated")
+	local payload = json.decode(args);
+	print(payload[1])
+end
+
+function OnChallengeEnd(self, args)
+	print("Challenge has ended!")
+	local payload = json.decode(args);
+	print(payload[1].challenge.challenge_id)
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("initialize") then
+		local config = {
+			app_id = "201965467362573",
+			environment = "production"
+		}
+		print("mcinstant init", json.encode(config))
+		mcinstant.initialize(json.encode(config), function(self, success)
+			print("mcinstant.initialized")
+
+			mcinstant.subscribe_event("wallet_balance_updated", OnWalletUpdated)
+			mcinstant.subscribe_event("challenge_ended", OnChallengeEnd)
+
+			mcinstant.get_wallet_balance(function(self, balance)
+				print("balance= ", balance)
+			end)
+
+			mcinstant.get_challenges(function(self, challenges)
+				print("-->",challenges)
+
+				mcinstant.create_challenge(0, 3, function(self, success, challenge_id)
+					print(success)
+					print("created challenge with id: ", challenge_id)
+
+					mcinstant.set_challenge_score(challenge_id, 10, function(self, success)
+
+						print("set challenge")
+						
+						mcinstant.get_challenge(challenge_id, function(self, challenge)
+							print(challenge)
+						end)
+						
+					end)
+
+					
+				end)
+			end)
+		end)
+	end
+	
+end
