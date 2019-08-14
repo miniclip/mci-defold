@@ -115,9 +115,9 @@
             var engineJS = document.createElement('script');
             engineJS.type = 'text/javascript';
             if (Module['isWASMSupported']) {
-                engineJS.src = 'MCI_Defold_wasm.js';
+                engineJS.src = '{{exe-name}}_wasm.js';
             } else {
-                engineJS.src = 'MCI_Defold_asmjs.js';
+                engineJS.src = '{{exe-name}}_asmjs.js';
             }
             document.head.appendChild(engineJS);
 	    }
@@ -134,7 +134,7 @@
             var targetRatio = {{display.width}} / {{display.height}};
             var actualRatio = width / height;
 
-            var isStretchCanvas = {{fb_instant.stretch_canvas}} + 0;
+            var isStretchCanvas = true;
             if (isStretchCanvas) {
                 app_container.style.width = width + "px";
                 app_container.style.height = height + "px";
