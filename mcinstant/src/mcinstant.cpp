@@ -79,13 +79,14 @@ static int MCI_GetChallengesProxy(lua_State* L) {
 // ===============================================
 lua_Listener mc_listener_getChallenge;
 
-static void MCI_GetChallengeResponse(const char* challenge){
+static void MCI_GetChallengeResponse(const int success, const char* challenge){
 	lua_State* L = mc_listener_getChallenge.m_L;
 	int top = lua_gettop(L);
 
 	lua_pushlistener(L, mc_listener_getChallenge);
+	lua_pushboolean(L, success);
 	lua_pushstring(L, challenge);
-	int ret = lua_pcall(L, 2, 0, 0);
+	int ret = lua_pcall(L, 3, 0, 0);
 	if (ret != 0) {
 		lua_pop(L, 1);
 	}
@@ -115,7 +116,7 @@ static void MCI_CreateChallengeResponse(const int success, const char* challenge
 	int top = lua_gettop(L);
 
 	lua_pushlistener(L, mc_listener_createChallenge);
-	lua_pushinteger(L, success);
+	lua_pushboolean(L, success);
 	lua_pushstring(L, challenge_id);
 	int ret = lua_pcall(L, 3, 0, 0);
 	if (ret != 0) {
@@ -148,7 +149,7 @@ static void MCI_SetChallengeScoreResponse(const int success){
 	int top = lua_gettop(L);
 
 	lua_pushlistener(L, mc_listener_setChallengeScore);
-	lua_pushinteger(L, success);
+	lua_pushboolean(L, success);
 	int ret = lua_pcall(L, 2, 0, 0);
 	if (ret != 0) {
 		lua_pop(L, 1);

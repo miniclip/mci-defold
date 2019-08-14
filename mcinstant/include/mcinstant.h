@@ -6,7 +6,7 @@
 
 typedef void (*OnInitializeCallback)(const int success);
 typedef void (*OnGetChallengesCallback)(const char* challenges);
-typedef void (*OnGetChallengeCallback)(const char *challenge);
+typedef void (*OnGetChallengeCallback)(const int success, const char *challenge);
 typedef void (*OnCreateChallengeCallback)(const int success, const char *challenge_id);
 typedef void (*OnSetChallengeScoreCallback)(const int success);
 typedef void (*OnGetWalletBallanceCallback)(const char *balance);

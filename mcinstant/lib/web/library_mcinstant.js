@@ -76,11 +76,12 @@ var MCInstantLibrary = {
 
         _instance.challenges.getByChallengeId(challenge_id).then(function(challenge){
 
-            var dataJSON = "{}";
             if (challenge != null){
-                dataJSON = JSON.stringify(challenge);
+                var dataJSON = JSON.stringify(challenge);
+                Utils.dynCall(callback, [1, dataJSON]);
+            } else {
+                Utils.dynCall(callback, [0, ""]);
             }
-            Utils.dynCall(callback, [dataJSON]);
         })
     },
 

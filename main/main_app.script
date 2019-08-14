@@ -17,13 +17,21 @@ end
 function OnWalletUpdated(self, args)
 	print("Wallet Balance was updated")
 	local payload = json.decode(args);
-	print(payload[1])
+	print("payload=", payload[1])
 end
 
 function OnChallengeEnd(self, args)
 	print("Challenge has ended!")
 	local payload = json.decode(args);
-	print(payload[1].challenge.challenge_id)
+	print("challenge that ended", payload[1].challenge.challenge_id)
+end
+
+function GetChallenge(challenge_id)
+	print("Get Challenge",challenge_id)
+	mcinstant.get_challenge(challenge_id, function(self, success, challenge)
+		print("challenge_exists",success)
+		print("challenge:", challenge)
+	end)
 end
 
 function on_message(self, message_id, message, sender)
@@ -46,18 +54,15 @@ function on_message(self, message_id, message, sender)
 			mcinstant.get_challenges(function(self, challenges)
 				print("-->",challenges)
 
-				mcinstant.create_challenge(0, 3, function(self, success, challenge_id)
-					print(success)
+				mcinstant.create_challenge(0, 60, function(self, success, challenge_id)
+					print("create_challenge", success);
 					print("created challenge with id: ", challenge_id)
 
 					mcinstant.set_challenge_score(challenge_id, 10, function(self, success)
 
 						print("set challenge")
-						
-						mcinstant.get_challenge(challenge_id, function(self, challenge)
-							print(challenge)
-						end)
-						
+
+						GetChallenge(challenge_id)
 					end)
 
 					
