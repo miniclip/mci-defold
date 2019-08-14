@@ -5,6 +5,29 @@ var MCInstantLibrary = {
     $_instance: null,
 
     $Utils: {
+        minVersion: "0.1.6",
+        isCompatibleVersion: function(){
+            var compatible = Utils.minVersion;
+            var current = MCInstant.MCInstant.version;
+            if (Utils.compareVersions(compatible, current) <= 0){
+                return true;
+            } else {
+                return false;
+            }
+        },
+        compareVersions: function(a,b){
+            var pa = a.split('.');
+            var pb = b.split('.');
+            for (var i = 0; i < 3; i++) {
+                var na = Number(pa[i]);
+                var nb = Number(pb[i]);
+                if (na > nb) return 1;
+                if (nb > na) return -1;
+                if (!isNaN(na) && isNaN(nb)) return 1;
+                if (isNaN(na) && !isNaN(nb)) return -1;
+            }
+            return 0;
+        },
         allocateString: function(str) {
             return allocate(intArrayFromString(str), "i8", ALLOC_NORMAL);
         },
@@ -24,15 +47,18 @@ var MCInstantLibrary = {
     },
 
     MCI_InitializeImpl: function(configData, callback){
-        console.log("MCInstant initialized");
+        if (!Utils.isCompatibleVersion()){
+            var mciVersion = MCInstant.MCInstant.version;
+            var minVersion = Utils.minVersion;
+            console.error("[MCI-Defold] This mcinstant version("+mciVersion+") used might be incompatible.");
+            console.error("[MCI-Defold] This extension requires at least mcinstant version "+minVersion+".");
+        }
+        console.log("[MCI-Defold] Initialized");
         var configJson = Pointer_stringify(configData);
         var config = configJson != "" ? JSON.parse(configJson) : null;
         
-        console.log("config", configJson);
         if (config == "") config = {};
         _instance = new MCInstant.MCInstant(config);
-
-        window.mci = _instance;
 
         Runtime.dynCall("vi", callback, [1]);
     },
@@ -48,7 +74,6 @@ var MCInstantLibrary = {
     {
         var challenge_id = Pointer_stringify(ptr_challenge_id);
 
-        console.log("trying to get challenge " + challenge_id);
         _instance.challenges.getByChallengeId(challenge_id).then(function(challenge){
 
             var dataJSON = "{}";
