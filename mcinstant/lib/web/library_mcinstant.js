@@ -4,12 +4,12 @@ var MCInstantLibrary = {
 
     $_instance: null,
 
-    $Utils: {
+    $MCUtils: {
         minVersion: "0.1.6",
         isCompatibleVersion: function(){
-            var compatible = Utils.minVersion;
+            var compatible = MCUtils.minVersion;
             var current = MCInstant.MCInstant.version;
-            if (Utils.compareVersions(compatible, current) <= 0){
+            if (MCUtils.compareVersions(compatible, current) <= 0){
                 return true;
             } else {
                 return false;
@@ -37,7 +37,7 @@ var MCInstantLibrary = {
             var i;
             for (i=0; i < in_args.length; i++) {
                 signature = signature + "i";
-                out_args.push((typeof in_args[i] == "string") ? Utils.allocateString(in_args[i]) : in_args[i]);
+                out_args.push((typeof in_args[i] == "string") ? MCUtils.allocateString(in_args[i]) : in_args[i]);
             }
             Runtime.dynCall(signature, fn, out_args.slice());
             for (i=0; i < in_args.length; i++) {
@@ -47,9 +47,9 @@ var MCInstantLibrary = {
     },
 
     MCI_InitializeImpl: function(configData, callback){
-        if (!Utils.isCompatibleVersion()){
+        if (!MCUtils.isCompatibleVersion()){
             var mciVersion = MCInstant.MCInstant.version;
-            var minVersion = Utils.minVersion;
+            var minVersion = MCUtils.minVersion;
             console.error("[MCI-Defold] This mcinstant version("+mciVersion+") used might be incompatible.");
             console.error("[MCI-Defold] This extension requires at least mcinstant version "+minVersion+".");
         }
@@ -66,7 +66,7 @@ var MCInstantLibrary = {
     MCI_GetChallengesImpl: function(callback)
     {
         _instance.challenges.getAll().then(function(challenges){
-            Utils.dynCall(callback, [JSON.stringify(challenges)]);
+            MCUtils.dynCall(callback, [JSON.stringify(challenges)]);
         });
     },
 
@@ -78,9 +78,9 @@ var MCInstantLibrary = {
 
             if (challenge != null){
                 var dataJSON = JSON.stringify(challenge);
-                Utils.dynCall(callback, [1, dataJSON]);
+                MCUtils.dynCall(callback, [1, dataJSON]);
             } else {
-                Utils.dynCall(callback, [0, ""]);
+                MCUtils.dynCall(callback, [0, ""]);
             }
         })
     },
@@ -93,10 +93,10 @@ var MCInstantLibrary = {
         challenge.save().then(function(success){
             if (success){
                 _instance.challenges.updateList().then(function(){
-                    Utils.dynCall(callback, [1, challenge.challengeId]);
+                    MCUtils.dynCall(callback, [1, challenge.challengeId]);
                 });
             } else {
-                Utils.dynCall(callback, [0, ""]);
+                MCUtils.dynCall(callback, [0, ""]);
             }
         })
         
@@ -109,12 +109,12 @@ var MCInstantLibrary = {
          
         var challenge = _instance.challenges.getByChallengeId(challenge_id).then(function(challenge){
             if (challenge == null){
-                Utils.dynCall(callback, [0]);
+                MCUtils.dynCall(callback, [0]);
             } else {
 
                 challenge.setScore(score);
                 challenge.save().then(function(success){
-                    Utils.dynCall(callback, [success?1:0]);
+                    MCUtils.dynCall(callback, [success?1:0]);
                 })
             }
         })
@@ -124,7 +124,7 @@ var MCInstantLibrary = {
     MCI_GetWalletBallanceImpl: function(callback)
     {
         _instance.wallet.getBalance().then(function(balances){
-            Utils.dynCall(callback, [JSON.stringify(balances)]);
+            MCUtils.dynCall(callback, [JSON.stringify(balances)]);
         })
     },
 
@@ -136,11 +136,11 @@ var MCInstantLibrary = {
             for(var i=0;i<arguments.length;i++){
                 args.push(arguments[i]);
             }
-            Utils.dynCall(callback, [JSON.stringify(args)]);
+            MCUtils.dynCall(callback, [JSON.stringify(args)]);
         })
     }
 }
 
 autoAddDeps(MCInstantLibrary, "$_instance")
-autoAddDeps(MCInstantLibrary, "$Utils")
+autoAddDeps(MCInstantLibrary, "$MCUtils")
 mergeInto(LibraryManager.library, MCInstantLibrary)
